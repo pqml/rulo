@@ -24,10 +24,10 @@ function serverWrapper (opts = {}) {
     })
   }
 
-  function listen (port) {
+  function listen (port, host) {
     return new Promise((resolve, reject) => {
       if (!created) return reject(new Error('Server not created'))
-      api.handler.listen(port, () => {
+      api.handler.listen(port, host, () => {
         resolve(api.handler)
       })
     })

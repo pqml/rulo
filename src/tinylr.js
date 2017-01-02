@@ -31,7 +31,7 @@ function tinylrWrapper (opts = {}) {
       if (!created) return reject(new Error('Server not created'))
       if (typeof port !== 'number') port = 35729
 
-      api.handler.listen(port, host || undefined, () => {
+      api.handler.listen(port, host, () => {
         log.info('Livereload running on port ' + port)
         resolve(api.handler)
       })

@@ -1,3 +1,4 @@
+const Emitter = require('events')
 const stacked = require('stacked')
 
 const log = require('./log')
@@ -11,8 +12,13 @@ const getLocalIp = require('./getLocalIp')
 const createIndexMiddleware = require('./middlewares/index')
 const createStaticMiddleware = require('./middlewares/static')
 const createLRMiddleware = require('./middlewares/livereload')
+const faviconMiddleware = require('./middlewares/favicon')
+const pushStateMiddleware = require('./middlewares/pushstate')
 
-function hashi (entries = [], opts = {}) {
+function hashi (entries = [], userOpts = {}) {
+  const api = new Emitter()
+  api.close = close
+
   const bundler = bundlerWrapper()
   const fileWatcher = fileWatcherWrapper()
   const server = serverWrapper()
@@ -21,14 +27,23 @@ function hashi (entries = [], opts = {}) {
 
   const localip = getLocalIp()
   const app = stacked()
-  let started = false
 
-  opts.port = typeof opts.port === 'number' ? opts.port : 8080
-  opts.basedir = process.cwd()
+  let opts = Object.assign({}, {
+    host: 'localhost',
+    port: 8080,
+    basedir: process.cwd(),
+    live: true,
+    livePort: 35729,
+    pushstate: false,
+    middleware: [],
+    watchGlob: '**/*.{html,css}',
+    rollupOpts: {},
+    rollupArgs: []
+  }, userOpts)
 
-  if (entries.length > 0 || 1) {
-    // bundler middleware
-  }
+  opts.live = !!opts.live
+  opts.pushstate = !!opts.pushstate
+  opts.port = opts.port | 0
 
   function reload (file) {
     if (!liveReloading) return
@@ -36,7 +51,7 @@ function hashi (entries = [], opts = {}) {
   }
 
   function startFileWatcher () {
-    fileWatcher.watch(opts.watchGlob, {})
+    fileWatcher.watch(opts.watchGlob, { cwd: opts.basedir })
     fileWatcher.on('watch', (event, file) => reload(file))
     return Promise.resolve()
   }
@@ -57,7 +72,7 @@ function hashi (entries = [], opts = {}) {
       tinylr.create()
         .then(() => getPort(opts.livePort))
         .then(availablePort => { opts.livePort = availablePort })
-        .then(() => tinylr.listen(opts.livePort))
+        .then(() => tinylr.listen(opts.livePort, opts.host))
         .then(() => {
           liveReloading = true
           resolve()
@@ -67,11 +82,27 @@ function hashi (entries = [], opts = {}) {
   }
 
   function setupMiddlewares () {
+    opts.middleware.forEach(middleware => {
+      if (typeof middleware !== 'function') {
+        throw new Error('middleware options must be functions')
+      }
+      app.use(middleware)
+    })
+
+    if (opts.pushstate) app.use(pushStateMiddleware)
+
     if (liveReloading) {
-      app.use(createLRMiddleware({port: opts.livePort}))
+      app.use(createLRMiddleware({
+        port: opts.livePort,
+        host: opts.host
+      }))
     }
+
     app.use(createStaticMiddleware(opts.basedir))
     app.use(createIndexMiddleware())
+
+    app.mount('/favicon.ico', faviconMiddleware)
+
     return Promise.resolve
   }
 
@@ -82,18 +113,19 @@ function hashi (entries = [], opts = {}) {
     .then(() => server.create(app))
     .then(() => getPort(opts.port))
     .then(availablePort => { opts.port = availablePort })
-    .then(() => server.listen(opts.port))
-    .then(() => { started = true })
-    .then(() => { log.info(`Server running on http://${localip}:${opts.port}`) })
+    .then(() => server.listen(opts.port, opts.host))
+    .then(() => { log.info(`Server running on http://${opts.host}:${opts.port}`) })
+    .then(() => { log.info(`Local server on http://${localip}:${opts.port}`) })
     .catch((err) => log.error(err))
 
   function close () {
-    if (server && started) server.close()
+    tinylr.close()
+    fileWatcher.close()
+    bundler.close()
+    server.close()
   }
 
-  return {
-    close
-  }
+  return api
 }
 
 module.exports = hashi

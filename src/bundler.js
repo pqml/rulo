@@ -28,7 +28,7 @@ function loadConfigFile (configPath) {
   })
 }
 
-function parseOptions (options) {
+function parseOptions (entries, options) {
   return new Promise((resolve, reject) => {
     // if we need to load a config
     const configPath = 'rollup.config.js'
@@ -58,9 +58,9 @@ function bundlerWrapper () {
   api.bundle = bundle
   api.close = close
 
-  function bundle (options = {}) {
+  function bundle (entries = [], options = {}) {
     return new Promise((resolve, reject) => {
-      parseOptions(options)
+      parseOptions(entries, options)
         .then(resolvedOpts => createWatcher(resolvedOpts))
         .then(resolvedWatcher => {
           created = true

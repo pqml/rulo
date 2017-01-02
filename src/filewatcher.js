@@ -20,16 +20,18 @@ function fileWatcherWrapper () {
   }
 
   function onChange (path) {
-    api.emit('watch', 'add', path)
+    api.emit('watch', 'change', path)
   }
 
   function watch (glob, userOpts) {
-    if (!ready) return
+
+    if (ready) return
 
     const opts = Object.assign({}, {
       usePolling: userOpts && userOpts.poll,
       ignored: ignores,
-      ignoreInitial: true
+      ignoreInitial: true,
+      cwd: process.cwd()
     }, userOpts)
 
     watcher = filewatch(glob, opts)
