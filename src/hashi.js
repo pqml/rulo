@@ -2,6 +2,7 @@ const Emitter = require('events')
 const stacked = require('stacked')
 
 const log = require('./log')
+const hashiDefaults = require('./hashiDefaults')
 const serverWrapper = require('./server')
 const lrWrapper = require('./tinylr')
 const fileWatcherWrapper = require('./filewatcher')
@@ -28,18 +29,7 @@ function hashi (entries = [], userOpts = {}) {
   const localip = getLocalIp()
   const app = stacked()
 
-  let opts = Object.assign({}, {
-    host: 'localhost',
-    port: 8080,
-    basedir: process.cwd(),
-    live: true,
-    livePort: 35729,
-    pushstate: false,
-    middleware: [],
-    watchGlob: '**/*.{html,css}',
-    rollupOpts: {},
-    rollupArgs: []
-  }, userOpts)
+  let opts = Object.assign({}, hashiDefaults, userOpts)
 
   opts.live = !!opts.live
   opts.pushstate = !!opts.pushstate

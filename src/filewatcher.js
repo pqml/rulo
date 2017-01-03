@@ -1,6 +1,5 @@
 const Emitter = require('events')
 const chokidar = require('chokidar')
-const filewatch = chokidar.watch
 
 const ignores = [
   'node_modules/**', 'bower_components/**',
@@ -24,9 +23,6 @@ function fileWatcherWrapper () {
   }
 
   function watch (glob, userOpts) {
-
-    if (ready) return
-
     const opts = Object.assign({}, {
       usePolling: userOpts && userOpts.poll,
       ignored: ignores,
@@ -34,7 +30,7 @@ function fileWatcherWrapper () {
       cwd: process.cwd()
     }, userOpts)
 
-    watcher = filewatch(glob, opts)
+    watcher = chokidar.watch(glob, opts)
     watcher.on('add', onAdd)
     watcher.on('change', onChange)
 
