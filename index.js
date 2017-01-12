@@ -1,5 +1,5 @@
-const hashi = require('./src/hashi')
+const rulo = require('./src/rulo')
 
-// module.exports = hashi
+// module.exports = rulo
 
-hashi()
+rulo()

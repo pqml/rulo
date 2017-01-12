@@ -1,8 +1,8 @@
 const minimist = require('minimist')
-const hashi = require('../src/hashi')
-const hashiDefaults = require('../src/hashiDefaults')
+const rulo = require('../src/rulo')
+const ruloDefaults = require('../src/ruloDefaults')
 
-const hashiVersion = require('../package.json').version
+const ruloVersion = require('../package.json').version
 const rollupVersion = require('rollup/package.json').version
 const rollupWatchVersion = require('rollup-watch/package.json').version
 
@@ -10,7 +10,7 @@ const args = process.argv.slice(2)
 
 const help = (
 `Usage:
-  hashi index.js:bundle.js [opts] -- [rollup opts]
+  rulo index.js:bundle.js [opts] -- [rollup opts]
 
 Options:
   --help, -h          show help message
@@ -18,7 +18,7 @@ Options:
   --port, -p          the port to run, default 9966
   --host, -H          the host, default internal IP (localhost)
   --basedir, -d       a path for base static content
-  --live, -l          enable default LiveReload integration
+  --live, -l          enable LiveReload integration, default true
   --live-port, -L     the LiveReload port, default 35729
   --pushstate, -P     always render the index page instead of a 404 page
   --watch-glob, --wg  glob(s) to watch for reloads, default '**/*.{html,css}'
@@ -38,7 +38,7 @@ const argv = minimist(args, {
     'basedir',
     'watchGlob'
   ],
-  default: hashiDefaults,
+  default: ruloDefaults,
   alias: {
     port: 'p',
     basedir: 'd',
@@ -71,7 +71,7 @@ argv.rollupArgs = argv['--']
 delete argv['--']
 
 if (argv.version) {
-  console.log('hashi v' + hashiVersion)
+  console.log('rulo v' + ruloVersion)
   console.log('rollup v' + rollupVersion)
   console.log('rollup-watch v' + rollupWatchVersion)
   process.exit(0)

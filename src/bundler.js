@@ -1,7 +1,7 @@
 const fs = require('fs')
 const Emitter = require('events')
 const rollup = require('rollup')
-const rollupWatch = require('./rollupWatch')
+const rollupWatch = require('another-rollup-watch')
 const requireFromString = require('require-from-string')
 const log = require('./log')
 

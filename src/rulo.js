@@ -2,7 +2,7 @@ const Emitter = require('events')
 const stacked = require('stacked')
 
 const log = require('./log')
-const hashiDefaults = require('./hashiDefaults')
+const ruloDefaults = require('./ruloDefaults')
 const serverWrapper = require('./server')
 const lrWrapper = require('./tinylr')
 const fileWatcherWrapper = require('./filewatcher')
@@ -16,7 +16,7 @@ const createLRMiddleware = require('./middlewares/livereload')
 const faviconMiddleware = require('./middlewares/favicon')
 const pushStateMiddleware = require('./middlewares/pushstate')
 
-function hashi (entries = [], userOpts = {}) {
+function rulo (entries = [], userOpts = {}) {
   const api = new Emitter()
   api.close = close
 
@@ -29,7 +29,7 @@ function hashi (entries = [], userOpts = {}) {
   const localip = getLocalIp()
   const app = stacked()
 
-  let opts = Object.assign({}, hashiDefaults, userOpts)
+  let opts = Object.assign({}, ruloDefaults, userOpts)
 
   opts.live = !!opts.live
   opts.pushstate = !!opts.pushstate
@@ -118,4 +118,4 @@ function hashi (entries = [], userOpts = {}) {
   return api
 }
 
-module.exports = hashi
+module.exports = rulo
