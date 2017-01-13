@@ -59,9 +59,11 @@ function bundlerWrapper () {
   api.close = close
 
   function bundle (entries = [], options = {}) {
+    let bundleOpts
     return new Promise((resolve, reject) => {
       parseOptions(entries, options)
-        .then(resolvedOpts => createWatcher(resolvedOpts))
+        .then(resolvedOpts => { bundleOpts = resolvedOpts })
+        .then(() => createWatcher(bundleOpts))
         .then(resolvedWatcher => {
           created = true
           watcher = resolvedWatcher
@@ -70,7 +72,10 @@ function bundlerWrapper () {
               case 'BUILD_START':
                 break
               case 'BUILD_END':
-                log.info('Rollup > bundled in ' + event.duration + 'ms')
+                log.info(
+                  log.colors.gray(bundleOpts.entry + ' bundled in ') +
+                  event.duration + 'ms'
+                )
                 api.emit('build')
                 break
               case 'ERROR':

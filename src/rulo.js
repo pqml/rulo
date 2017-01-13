@@ -1,3 +1,4 @@
+const ruloVersion = require('../package.json').version
 const Emitter = require('events')
 const stacked = require('stacked')
 
@@ -96,6 +97,8 @@ function rulo (entries = [], userOpts = {}) {
     return Promise.resolve
   }
 
+  log.info(log.emoji('cyclone') + log.colors.blue(' version ' + ruloVersion))
+
   startLiveReload()
     .then(() => startFileWatcher())
     .then(() => startBundler())
@@ -104,8 +107,19 @@ function rulo (entries = [], userOpts = {}) {
     .then(() => getPort(opts.port))
     .then(availablePort => { opts.port = availablePort })
     .then(() => server.listen(opts.port, opts.host))
-    .then(() => { log.info(`Server running on http://${opts.host}:${opts.port}`) })
-    .then(() => { log.info(`Local server on http://${localip}:${opts.port}`) })
+    .then(() => {
+      log.hr(21)
+      log.success('Server is running')
+      log.info(
+        log.colors.gray('↳  Local URL     ') +
+        log.colors.underline('http://' + opts.host + ':' + opts.port)
+      )
+      log.info(
+        log.colors.gray('↳  External URL  ') +
+        log.colors.underline('http://' + localip + ':' + opts.port)
+      )
+      log.hr(21)
+    })
     .catch((err) => log.error(err))
 
   function close () {

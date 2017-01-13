@@ -32,7 +32,7 @@ function tinylrWrapper (opts = {}) {
       if (typeof port !== 'number') port = 35729
 
       api.handler.listen(port, host, () => {
-        log.info('Livereload running on port ' + port)
+        log.success('Livereload is running on port ' + port)
         resolve(api.handler)
       })
 
@@ -55,7 +55,7 @@ function tinylrWrapper (opts = {}) {
   }
 
   function reload (path) {
-    log.info('Livereload > reloading...')
+    log.debug('Livereloading...')
     if (!created) return
     try {
       api.handler.changed({
