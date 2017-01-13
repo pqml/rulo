@@ -100,3 +100,12 @@ All options are optional.
 * If the first argument of rulo() is undefined, default is `{}`
 * Overides properties of the config file passed to `options.config`
 * See [another-rollup-watch API usage](https://github.com/pqml/another-rollup-watch#api-usage) and [rollup javascript API](https://github.com/rollup/rollup/wiki/JavaScript-API#rolluprollup-options-) for more informations
+
+#### `stream` (Writable Stream)
+* Default: `process.stdout`
+* A writable stream to log rulo activity
+* The writable stream must have a `write()` method
+
+#### `verbose` (Boolean)
+* Default: `false`
+* Log additional informations
