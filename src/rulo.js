@@ -3,13 +3,13 @@ const Emitter = require('events')
 const stacked = require('stacked')
 
 const log = require('./log')
-const ruloDefaults = require('./ruloDefaults')
 const serverWrapper = require('./server')
 const lrWrapper = require('./tinylr')
 const fileWatcherWrapper = require('./filewatcher')
 const bundlerWrapper = require('./bundler')
 const getPort = require('./getPort')
 const getLocalIp = require('./getLocalIp')
+const parseOptions = require('./parseOptions')
 
 const createIndexMiddleware = require('./middlewares/index')
 const createStaticMiddleware = require('./middlewares/static')
@@ -17,7 +17,7 @@ const createLRMiddleware = require('./middlewares/livereload')
 const faviconMiddleware = require('./middlewares/favicon')
 const pushStateMiddleware = require('./middlewares/pushstate')
 
-function rulo (entries = [], userOpts = {}) {
+function rulo (entry, _opts) {
   const api = new Emitter()
   api.close = close
 
@@ -25,16 +25,42 @@ function rulo (entries = [], userOpts = {}) {
   const fileWatcher = fileWatcherWrapper()
   const server = serverWrapper()
   const tinylr = lrWrapper()
-  let liveReloading = false
 
   const localip = getLocalIp()
   const app = stacked()
 
-  let opts = Object.assign({}, ruloDefaults, userOpts)
+  let liveReloading = false
+  let opts = {}
+  _opts = _opts || {}
 
-  opts.live = !!opts.live
-  opts.pushstate = !!opts.pushstate
-  opts.port = opts.port | 0
+  log.info(log.emoji('cyclone') + log.colors.blue(' version ' + ruloVersion))
+
+  parseOptions(entry, _opts)
+    .then(resolvedOpts => { opts = resolvedOpts })
+    .then(() => startLiveReload())
+    .then(() => startFileWatcher())
+    .then(() => startBundler())
+    .then(() => { setupMiddlewares() })
+    .then(() => server.create(app))
+    .then(() => getPort(opts.port))
+    .then(availablePort => { opts.port = availablePort })
+    .then(() => server.listen(opts.port, opts.host))
+    .then(() => {
+      log.hr(21)
+      log.success('Server is running')
+      log.info(
+        log.colors.gray('↳  Local URL     ') +
+        log.colors.underline('http://' + opts.host + ':' + opts.port)
+      )
+      log.info(
+        log.colors.gray('↳  External URL  ') +
+        log.colors.underline('http://' + localip + ':' + opts.port)
+      )
+      log.hr(21)
+    })
+    .catch((err) => log.error(err))
+
+  return api
 
   function reload (file) {
     if (!liveReloading) return
@@ -49,8 +75,9 @@ function rulo (entries = [], userOpts = {}) {
 
   function startBundler () {
     return new Promise((resolve, reject) => {
-      // if (!opts.entries) return
-      bundler.bundle(opts)
+      // if there is no entry for rollup, rulo act as a static server
+      if (!opts.rollup || !opts.rollup.entry) return
+      bundler.bundle(opts.rollup)
         .then(resolve)
         .catch(reject)
       bundler.on('build', reload)
@@ -97,39 +124,12 @@ function rulo (entries = [], userOpts = {}) {
     return Promise.resolve
   }
 
-  log.info(log.emoji('cyclone') + log.colors.blue(' version ' + ruloVersion))
-
-  startLiveReload()
-    .then(() => startFileWatcher())
-    .then(() => startBundler())
-    .then(() => { setupMiddlewares() })
-    .then(() => server.create(app))
-    .then(() => getPort(opts.port))
-    .then(availablePort => { opts.port = availablePort })
-    .then(() => server.listen(opts.port, opts.host))
-    .then(() => {
-      log.hr(21)
-      log.success('Server is running')
-      log.info(
-        log.colors.gray('↳  Local URL     ') +
-        log.colors.underline('http://' + opts.host + ':' + opts.port)
-      )
-      log.info(
-        log.colors.gray('↳  External URL  ') +
-        log.colors.underline('http://' + localip + ':' + opts.port)
-      )
-      log.hr(21)
-    })
-    .catch((err) => log.error(err))
-
   function close () {
     tinylr.close()
     fileWatcher.close()
     bundler.close()
     server.close()
   }
-
-  return api
 }
 
 module.exports = rulo

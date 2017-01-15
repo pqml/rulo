@@ -70,10 +70,10 @@ function warn (msg) {
 
 function error (err) {
   if (level > 3) return
-  let line = emoji('skull') + colors.red(' Error: ')
+  let line = emoji('skull') + ' '
 
   if (err instanceof Error) {
-    line += (err.name) ? colors.red(err.name + ' - ') : ''
+    line += (err.name) ? colors.red(err.name + ': ') : colors.red('Error: ')
     line += colors.red(err.message) || ''
     line += '\n'
     line += err.stack ? '\n' + colors.gray(err.stack) + '\n' : ''

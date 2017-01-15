@@ -1,44 +1,7 @@
-const fs = require('fs')
 const Emitter = require('events')
 const rollup = require('rollup')
 const rollupWatch = require('another-rollup-watch')
-const requireFromString = require('require-from-string')
 const log = require('./log')
-
-function loadConfigFile (configPath) {
-  return new Promise((resolve, reject) => {
-    fs.realpath(configPath, (err, resolvedPath) => {
-      if (err) return reject(err)
-      rollup.rollup({
-        entry: configPath,
-        onwarn: message => {
-          if (message.code === 'UNRESOLVED_IMPORT') return
-          reject(message.toString())
-        }
-      })
-        .then(bundle => {
-          const code = bundle.generate({ format: 'cjs' }).code
-          const options = requireFromString(code)
-          resolve(options)
-        })
-        .catch(err => {
-          reject(err)
-        })
-    })
-  })
-}
-
-function parseOptions (entries, options) {
-  return new Promise((resolve, reject) => {
-    // if we need to load a config
-    const configPath = 'rollup.config.js'
-    loadConfigFile(configPath)
-      .then(options => {
-        resolve(options)
-      })
-      .catch(reject)
-  })
-}
 
 function createWatcher (options, resolve, reject) {
   return new Promise((resolve, reject) => {
@@ -58,12 +21,10 @@ function bundlerWrapper () {
   api.bundle = bundle
   api.close = close
 
-  function bundle (entries = [], options = {}) {
-    let bundleOpts
+  function bundle (opts) {
+    opts = opts || {}
     return new Promise((resolve, reject) => {
-      parseOptions(entries, options)
-        .then(resolvedOpts => { bundleOpts = resolvedOpts })
-        .then(() => createWatcher(bundleOpts))
+      createWatcher(opts)
         .then(resolvedWatcher => {
           created = true
           watcher = resolvedWatcher
@@ -73,13 +34,13 @@ function bundlerWrapper () {
                 break
               case 'BUILD_END':
                 log.info(
-                  log.colors.gray(bundleOpts.entry + ' bundled in ') +
+                  log.colors.gray(opts.entry + ' bundled in ') +
                   event.duration + 'ms'
                 )
                 api.emit('build')
                 break
               case 'ERROR':
-                log.error('Rollup Error', event.error)
+                log.error(event.error)
                 api.emit('error')
                 break
             }
