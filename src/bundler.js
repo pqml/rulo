@@ -1,7 +1,17 @@
+const url = require('url')
+const path = require('path')
+const Readable = require('stream').Readable
 const Emitter = require('events')
 const rollup = require('rollup')
-const rollupWatch = require('another-rollup-watch')
+const rollupWatch = require('rollup-watch')
 const log = require('./log')
+
+const mimeTypes = {
+  '.js': 'application/javascript',
+  '.map': 'application/json',
+  '.css': 'text/css',
+  '.html': 'text/html'
+}
 
 function createWatcher (options, resolve, reject) {
   return new Promise((resolve, reject) => {
@@ -16,15 +26,33 @@ function createWatcher (options, resolve, reject) {
 function bundlerWrapper () {
   let created = false
   let watcher = null
+  let files = {}
 
   const api = new Emitter()
   api.bundle = bundle
   api.close = close
+  api.middleware = middleware
+
+  function middleware (req, res, next) {
+    const filename = url.parse(req.url).pathname.slice(1)
+    const ext = path.extname(filename)
+
+    if (filename && filename.length > 0 && files[filename]) {
+      res.setHeader('content-type', mimeTypes[ext])
+      res.statusCode = 200
+      const stream = new Readable()
+      stream.push(files[filename])
+      stream.push(null)
+      stream.pipe(res)
+    } else {
+      next()
+    }
+  }
 
   function bundle (opts) {
     opts = opts || {}
     return new Promise((resolve, reject) => {
-      createWatcher(opts)
+      createWatcher(opts.rollup)
         .then(resolvedWatcher => {
           created = true
           watcher = resolvedWatcher
@@ -34,14 +62,18 @@ function bundlerWrapper () {
                 break
               case 'BUILD_END':
                 log.info(
-                  log.colors.gray(opts.entry + ' bundled in ') +
-                  event.duration + 'ms'
+                  log.colors.gray(
+                    opts.rollup.entry +
+                    ' bundled in ' +
+                    event.duration + 'ms'
+                  )
                 )
-                api.emit('build')
+                files = event.files
+                api.emit('bundle_end')
                 break
               case 'ERROR':
                 log.error(event.error)
-                api.emit('error')
+                api.emit('bundle_error')
                 break
             }
           })

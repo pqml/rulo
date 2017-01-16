@@ -40,7 +40,7 @@ function rulo (entry, _opts) {
     .then(() => startLiveReload())
     .then(() => startFileWatcher())
     .then(() => startBundler())
-    .then(() => { setupMiddlewares() })
+    .then(() => setupMiddlewares())
     .then(() => server.create(app))
     .then(() => getPort(opts.port))
     .then(availablePort => { opts.port = availablePort })
@@ -68,6 +68,8 @@ function rulo (entry, _opts) {
   }
 
   function startFileWatcher () {
+    // No need to watch file if there is no glob or live option
+    if (!opts.live || opts.watchGlob) return Promise.resolve()
     fileWatcher.watch(opts.watchGlob, { cwd: opts.basedir })
     fileWatcher.on('watch', (event, file) => reload(file))
     return Promise.resolve()
@@ -76,17 +78,18 @@ function rulo (entry, _opts) {
   function startBundler () {
     return new Promise((resolve, reject) => {
       // if there is no entry for rollup, rulo act as a static server
-      if (!opts.rollup || !opts.rollup.entry) return
-      bundler.bundle(opts.rollup)
+      if (!opts.rollup || !opts.rollup.entry) return resolve()
+      bundler.bundle(opts)
         .then(resolve)
         .catch(reject)
-      bundler.on('build', reload)
+      bundler.on('bundle_end', reload)
     })
   }
 
   function startLiveReload () {
     return new Promise((resolve, reject) => {
-      // if (!opts.live) return resolve()
+      // if no live parameter, don't start liveReload
+      if (!opts.live) return resolve()
       tinylr.create()
         .then(() => getPort(opts.livePort))
         .then(availablePort => { opts.livePort = availablePort })
@@ -107,6 +110,8 @@ function rulo (entry, _opts) {
       app.use(middleware)
     })
 
+    if (opts.rollup && opts.rollup.entry) app.use(bundler.middleware)
+
     if (opts.pushstate) app.use(pushStateMiddleware)
 
     if (liveReloading) {
@@ -117,11 +122,11 @@ function rulo (entry, _opts) {
     }
 
     app.use(createStaticMiddleware(opts.basedir))
-    app.use(createIndexMiddleware())
+    app.use(createIndexMiddleware(opts.index))
 
     app.mount('/favicon.ico', faviconMiddleware)
 
-    return Promise.resolve
+    return Promise.resolve()
   }
 
   function close () {

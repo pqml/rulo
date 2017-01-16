@@ -101,6 +101,17 @@ All options are optional.
 * Overides properties of the config file passed to `options.config`
 * See [another-rollup-watch API usage](https://github.com/pqml/another-rollup-watch#api-usage) and [rollup javascript API](https://github.com/rollup/rollup/wiki/JavaScript-API#rolluprollup-options-) for more informations
 
+#### `index` (Object)
+* An object of options to customize the generated index.html
+* `index.title` (String)
+    * The `<title>` to use (default: `'rulo'`)
+* `index.css` (String|Array)
+    * Stylesheets URL (default: `null`)
+* `index.script` (String|Array)
+    * `<script src>` scripts URL to use (default: _entry filename_)
+* `index.force` (Boolean)
+    * If true, always generate index.html, even if one is present (default: `false`)
+
 #### `stream` (Writable Stream)
 * Default: `process.stdout`
 * A writable stream to log rulo activity

@@ -1,10 +1,11 @@
 {
   "name": "rulo",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A minimal dev server for Rollup",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src"
   },
   "repository": {
     "type": "git",
@@ -17,17 +18,23 @@
   },
   "homepage": "https://github.com/pqml/rulo#readme",
   "dependencies": {
-    "another-rollup-watch": "git+https://github.com/pqml/another-rollup-watch.git",
     "chokidar": "^1.6.1",
     "connect-pushstate": "^1.1.0",
     "inject-lr-script": "^2.0.0",
     "minimist": "^1.2.0",
     "node-emoji": "^1.5.0",
     "require-from-string": "^1.2.1",
-    "rollup": "^0.39.2",
+    "rollup": "^0.41.4",
+    "rollup-watch": "git+https://github.com/pqml/rollup-watch.git",
     "serve-static": "^1.11.1",
     "stacked": "^1.1.1",
     "term-color": "^1.0.1",
     "tiny-lr": "^1.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^3.13.1",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^2.0.1"
   }
 }
