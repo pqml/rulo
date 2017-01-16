@@ -13,12 +13,17 @@ The return value is an event emitter.
 <br>
 The bundle's entry point. By default, the bundle will be served at the base dir of the rulo server, with the same name as the entry file.<br>
 
-* __By default, the bundle is only written in memory.__
+__:warning: If you pass an entry as first argument of rulo, rulo will automatically serve the bundle in-memory only and in an iife format for convenience.__ You can setup more advanced settings by setting the entry to false or undefined and only use a config file with `options.config` or an object of rollup options with `options.rollup`
+
+<br>
+
+###### Overiding entry property
+
 * If no entry is given, rulo will use the entry property passed to `options.rollup`.
 * If there is no entry property, rulo will use the entry property from the config file passed to `options.config`
 * If no entry / config file is given, rulo acts as a static HTTP server with LiveReload ability.
 
-
+<br>
 
 ###### Basic entry example
 ```javascript
@@ -29,7 +34,7 @@ const r = rulo('app.js')
 
 <br>
 
-You can specify the location of the bundle with the syntax `entry.js:bundle.js`.
+:bulb: __You can specify the location of the destination bundle with the syntax `entry.js:bundle.js`.__
 The path of the output starts from the root of the rulo server, configurable via `options.baseDir`.
 
 ###### Entry with explicit output path
@@ -98,7 +103,7 @@ All options are optional.
 }
 ```
 * If the first argument of rulo() is undefined, default is `{}`
-* Overides properties of the config file passed to `options.config`
+* :warning: __Overides properties of the config file passed to `options.config`__
 * See [another-rollup-watch API usage](https://github.com/pqml/another-rollup-watch#api-usage) and [rollup javascript API](https://github.com/rollup/rollup/wiki/JavaScript-API#rolluprollup-options-) for more informations
 
 #### `index` (Object)
