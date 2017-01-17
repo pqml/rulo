@@ -1,3 +1,5 @@
+'use strict'
+
 function faviconMiddleware (req, res) {
   var maxAge = 345600 // 4 days
   res.setHeader('Cache-Control', 'public, max-age=' + Math.floor(maxAge / 1000))

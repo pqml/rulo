@@ -1,4 +1,5 @@
-// TODO: Make a proper static middleware, serve-static is too much
+'use strict'
+
 const serveStatic = require('serve-static')
 
 function createStaticMiddleware (basedir) {

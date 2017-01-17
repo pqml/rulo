@@ -1,3 +1,5 @@
+'use strict'
+
 const ruloVersion = require('../package.json').version
 const Emitter = require('events')
 const stacked = require('stacked')
@@ -18,6 +20,13 @@ const faviconMiddleware = require('./middlewares/favicon')
 const pushStateMiddleware = require('./middlewares/pushstate')
 
 function rulo (entry, _opts) {
+  let opts = {}
+  _opts = _opts || {}
+
+  // setup log right now
+  if (_opts.stream) log.setStream(_opts.stream)
+  if (_opts.verbose) log.setLevel('debug')
+
   const api = new Emitter()
   api.close = close
 
@@ -30,8 +39,6 @@ function rulo (entry, _opts) {
   const app = stacked()
 
   let liveReloading = false
-  let opts = {}
-  _opts = _opts || {}
 
   log.info(log.emoji('cyclone') + log.colors.blue(' version ' + ruloVersion))
 
@@ -47,7 +54,7 @@ function rulo (entry, _opts) {
     .then(() => server.listen(opts.port, opts.host))
     .then(() => {
       log.hr(21)
-      log.success('Server is running')
+      log.success('Server is running on port ' + opts.port)
       log.info(
         log.colors.gray('↳  Local URL     ') +
         log.colors.underline('http://' + opts.host + ':' + opts.port)
@@ -78,7 +85,10 @@ function rulo (entry, _opts) {
   function startBundler () {
     return new Promise((resolve, reject) => {
       // if there is no entry for rollup, rulo act as a static server
-      if (!opts.rollup || !opts.rollup.entry) return resolve()
+      if (!opts.rollup || !opts.rollup.entry) {
+        log.warn('No entry file. Rulo will act as a static server')
+        return resolve()
+      }
       bundler.bundle(opts)
         .then(resolve)
         .catch(reject)

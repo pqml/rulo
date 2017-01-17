@@ -1,3 +1,5 @@
+'use strict'
+
 const url = require('url')
 const path = require('path')
 const Readable = require('stream').Readable
@@ -5,6 +7,18 @@ const Emitter = require('events')
 const rollup = require('rollup')
 const rollupWatch = require('rollup-watch')
 const log = require('./log')
+
+const criticalErrors = [
+  /^Could not resolve entry/i
+]
+
+function isErrorCritical (err) {
+  for (let i = 0; i < criticalErrors.length; i++) {
+    const reg = criticalErrors[i]
+    if (reg.test(err)) return true
+  }
+  return false
+}
 
 const mimeTypes = {
   '.js': 'application/javascript',
@@ -72,7 +86,15 @@ function bundlerWrapper () {
                 api.emit('bundle_end')
                 break
               case 'ERROR':
-                log.error(event.error)
+                const error = event.error
+                error.name = 'Rollup Error'
+
+                if (error.message && isErrorCritical(error.message)) {
+                  log.exitError(event.error)
+                } else {
+                  log.error(event.error)
+                }
+
                 api.emit('bundle_error')
                 break
             }

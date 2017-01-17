@@ -1,85 +1,101 @@
+'use strict'
+
 const minimist = require('minimist')
+const parseRollupArgs = require('./parseRollupArgs')
 const rulo = require('../src/rulo')
-const ruloDefaults = require('../src/ruloDefaults')
+const log = require('../src/log')
 
 const ruloVersion = require('../package.json').version
 const rollupVersion = require('rollup/package.json').version
 const rollupWatchVersion = require('rollup-watch/package.json').version
+const help = require('./help')
 
 const args = process.argv.slice(2)
 
-const help = (
-`Usage:
-  rulo index.js:bundle.js [opts] -- [rollup opts]
-
-Options:
-  --help, -h          show help message
-  --version           show version
-  --port, -p          the port to run, default 9966
-  --host, -H          the host, default internal IP (localhost)
-  --basedir, -d       a path for base static content
-  --live, -l          enable LiveReload integration, default true
-  --live-port, -L     the LiveReload port, default 35729
-  --pushstate, -P     always render the index page instead of a 404 page
-  --watch-glob, --wg  glob(s) to watch for reloads, default '**/*.{html,css}'
-`
-)
-
-const argv = minimist(args, {
+const minimistOpts = {
   boolean: [
     'live',
-    'pushstate',
-    'version'
+    'pushState',
+    'version',
+    'config',
+    'verbose'
   ],
   string: [
+    'config',
     'host',
     'port',
     'livePort',
     'basedir',
     'watchGlob'
   ],
-  default: ruloDefaults,
+  default: {
+    live: true
+  },
   alias: {
+    config: 'c',
     port: 'p',
     basedir: 'd',
     help: 'h',
+    version: 'V',
+    verbose: 'v',
     host: 'H',
     live: 'l',
-    pushstate: 'P',
+    pushState: 'P',
     watchGlob: [ 'wg', 'watch-glob' ],
     'livePort': ['L', 'live-port']
   },
   '--': true
-})
+}
 
-const entries = argv._.map((entry) => {
-  entry = '' + entry
-  entry = entry.split(':')
-  if (entry.length === 1) {
-    return entry[0]
-  } else if (entry.length === 2) {
-    const entryObj = {}
-    entryObj[entry[0]] = entry[1]
-    return entryObj
-  } else {
-    throw new Error('Bad syntax on entry')
-  }
-})
-delete argv._
-
-argv.rollupArgs = argv['--']
-delete argv['--']
+const argv = minimist(args, minimistOpts)
 
 if (argv.version) {
-  console.log('rulo v' + ruloVersion)
-  console.log('rollup v' + rollupVersion)
-  console.log('rollup-watch v' + rollupWatchVersion)
+  log.info('rulo v' + ruloVersion)
+  log.info('rollup v' + rollupVersion)
+  log.info('rollup-watch v' + rollupWatchVersion)
   process.exit(0)
 }
 
 if (argv.help) {
-  console.log(help)
+  log.info(help())
   process.exit(0)
 }
 
-console.log(argv, entries)
+if (argv.version !== undefined) delete argv.version
+if (argv.help !== undefined) delete argv.help
+
+// setup entry
+let entry
+if (argv._ && argv._[0]) {
+  entry = argv._[0]
+  if (entry.split(':').length > 2) {
+    log.exitError('Bad syntax on entry')
+  }
+}
+delete argv._
+
+// get rollup options
+const rollupOptions = parseRollupArgs(argv['--'])
+delete argv['--']
+
+// keep only real options
+const keys = Object.keys(minimistOpts.alias)
+let cliOptions = {}
+keys.forEach(key => {
+  if (
+  argv.hasOwnProperty(key) !== undefined &&
+  typeof argv[key] !== 'undefined'
+  ) {
+    cliOptions[key] = argv[key]
+  }
+})
+
+const options = Object.assign({}, cliOptions)
+options.rollup = Object.assign({}, rollupOptions, options.rollup)
+
+if (options.rollup.config) {
+  if (!options.config) options.config = options.rollup.config
+  delete options.rollup.config
+}
+
+rulo(entry, options)

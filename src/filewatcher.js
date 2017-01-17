@@ -1,3 +1,5 @@
+'use strict'
+
 const Emitter = require('events')
 const chokidar = require('chokidar')
 

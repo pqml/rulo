@@ -1,3 +1,5 @@
+'use strict'
+
 const path = require('path')
 const fs = require('fs')
 const rollup = require('rollup')
@@ -21,7 +23,12 @@ const defaultOpts = {
     script: null,
     force: false
   },
-  rollup: {},
+  rollup: {
+    watch: {
+      write: true,
+      inMemory: false
+    }
+  },
   stream: '', // process.stdout
   verbose: false
 }
@@ -65,12 +72,14 @@ function parseOptions (entry, _opts) {
 
       // just to avoid some extra dependencies for a deep-assign function
       let opts = Object.assign({}, defaultOpts, _opts)
+
       opts.basedir = path.resolve(cwd, opts.basedir)
       opts.index = Object.assign({}, defaultOpts.index, opts.index)
       opts.rollup = Object.assign({}, configOpts, opts.rollup)
 
       opts.rollup.watch = Object.assign(
         {},
+        defaultOpts.rollup.watch,
         configOpts.watch || {},
         (_opts.rollup && _opts.rollup.watch) ? _opts.rollup.watch : {}
       )
@@ -99,27 +108,6 @@ function parseOptions (entry, _opts) {
         opts.rollup.dest = splittedEntry[1]
           ? splittedEntry[1]
           : opts.rollup.entry
-
-        // normalize entry path from cwd (rollup behaviour)
-        // normalize dest path from opts.basedir (rulo behaviour)
-        // opts.rollup.entry = path.resolve(cwd, splittedEntry[0])
-        // opts.rollup.dest = splittedEntry[1]
-        //   ? path.resolve(opts.basedir, splittedEntry[1])
-        //   : opts.rollup.entry
-      } else {
-      // normalize path from cwd (rollup behaviour)
-      //   if (opts.rollup.entry) {
-      //     opts.rollup.entry = path.resolve(cwd, opts.rollup.entry)
-      //   }
-      //   if (opts.rollup.dest) {
-      //     opts.rollup.dest = path.resolve(cwd, opts.rollup.dest)
-      //   }
-      //   if (opts.rollup.targets) {
-      //     opts.rollup.targets = opts.rollup.targets.map(el => {
-      //       if (el.dest) el.dest = path.resolve(cwd, el.dest)
-      //       return el
-      //     })
-      //   }
       }
 
       if (!opts.index.script) {
@@ -145,7 +133,6 @@ function parseOptions (entry, _opts) {
           }
         }
       }
-
       resolve(opts)
     }
   })

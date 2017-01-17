@@ -1,7 +1,10 @@
+'use strict'
+
 const log = require('./log')
 const tinylr = require('tiny-lr')
 
-function tinylrWrapper (opts = {}) {
+function tinylrWrapper (opts) {
+  opts = opts || {}
   let created = false
 
   const api = {

@@ -1,6 +1,9 @@
+'use strict'
+
 const liveReload = require('inject-lr-script')
 
-function createLRMiddleware (opts = {}) {
+function createLRMiddleware (opts) {
+  opts = opts || {}
   return liveReload(opts)
 }
 

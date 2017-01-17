@@ -1,3 +1,5 @@
+'use strict'
+
 const net = require('net')
 const DEFAULT_START_PORT = 2000
 const DEFAULT_MAX_PORT = 65535

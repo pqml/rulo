@@ -1,7 +1,10 @@
+'use strict'
+
 // TODO: HTTPS Support
 const http = require('http')
 
-function serverWrapper (opts = {}) {
+function serverWrapper (opts) {
+  opts = opts || {}
   let created = false
 
   const api = {
