@@ -1,6 +1,6 @@
 {
   "name": "rulo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A minimal dev server for Rollup",
   "main": "index.js",
   "scripts": {
