@@ -8,7 +8,7 @@ const requireFromString = require('require-from-string')
 const cwd = process.cwd()
 
 const defaultOpts = {
-  host: 'localhost',
+  host: undefined,
   port: 8080,
   basedir: cwd,
   live: true,
