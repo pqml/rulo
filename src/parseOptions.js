@@ -105,8 +105,10 @@ function parseOptions (entry, _opts) {
         opts.rollup.format = 'iife'
 
         opts.rollup.entry = splittedEntry[0]
+
+        // normalize dest path by writing it relative to cwd, not to basedir
         opts.rollup.dest = splittedEntry[1]
-          ? splittedEntry[1]
+          ? path.relative(cwd, path.resolve(opts.basedir, splittedEntry[1]))
           : opts.rollup.entry
       }
 

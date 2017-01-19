@@ -1,4 +1,4 @@
-# Javascript API
+# :cyclone::wrench: Javascript API
 
 <br>
 
@@ -83,7 +83,7 @@ All options are optional.
 
 #### `pushState` (Boolean)
 * Default: `false`
-* Enable client-side pushstate router support, which rewrite 404 requests to the server root (`/index.html`)
+* Set to true to enable client-side pushstate router support, which rewrite 404 requests to the server root (`/index.html`)
 
 #### `config` (Boolean|String)
 * Default: `false`
@@ -121,6 +121,10 @@ All options are optional.
 * Default: `process.stdout`
 * A writable stream to log rulo activity
 * The writable stream must have a `write()` method
+
+#### `overlay` (Boolean)
+* Default: `true`
+* Set to false to disable the DOM-based error reporter
 
 #### `verbose` (Boolean)
 * Default: `false`

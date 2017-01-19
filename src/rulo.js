@@ -65,7 +65,7 @@ function rulo (entry, _opts) {
       )
       log.hr(21)
     })
-    .catch((err) => log.error(err))
+    .catch((err) => log.exitError(err))
 
   return api
 

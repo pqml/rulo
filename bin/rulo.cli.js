@@ -7,14 +7,15 @@ const log = require('../src/log')
 
 const ruloVersion = require('../package.json').version
 const rollupVersion = require('rollup/package.json').version
-const rollupWatchVersion = require('rollup-watch/package.json').version
+const rollupWatchVersion = require('another-rollup-watch/package.json').version
 const help = require('./help')
 
 const args = process.argv.slice(2)
 
 const minimistOpts = {
   boolean: [
-    'live',
+    'noOverlay',
+    'noLive',
     'pushState',
     'version',
     'config',
@@ -39,7 +40,8 @@ const minimistOpts = {
     version: 'V',
     verbose: 'v',
     host: 'H',
-    live: 'l',
+    noLive: 'no-live',
+    noOverlay: 'no-overlay',
     pushState: 'P',
     watchGlob: [ 'wg', 'watch-glob' ],
     'livePort': ['L', 'live-port']
@@ -93,9 +95,16 @@ keys.forEach(key => {
 const options = Object.assign({}, cliOptions)
 options.rollup = Object.assign({}, rollupOptions, options.rollup)
 
+// copy config from rollup in base options
 if (options.rollup.config) {
   if (!options.config) options.config = options.rollup.config
   delete options.rollup.config
 }
+
+// change noLive to live option, and noOverlay to overlay
+options.live = options.noLive !== undefined ? !options.noLive : true
+options.overlay = options.noOverlay !== undefined ? !options.noOverlay : true
+delete options.noLive
+delete options.noOverlay
 
 rulo(entry, options)

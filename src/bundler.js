@@ -5,8 +5,10 @@ const path = require('path')
 const Readable = require('stream').Readable
 const Emitter = require('events')
 const rollup = require('rollup')
-const rollupWatch = require('rollup-watch')
+const rollupWatch = require('another-rollup-watch')
 const log = require('./log')
+
+const cwd = process.cwd()
 
 const criticalErrors = [
   /^Could not resolve entry/i
@@ -47,10 +49,17 @@ function bundlerWrapper () {
   api.close = close
   api.middleware = middleware
 
+  function servedURL (basedir, filepath) {
+    return path.relative(basedir, path.resolve(cwd, filepath))
+      .split(path.sep)
+      .filter(v => v !== '..' && v !== '' && v !== '.')
+      .join(path.sep)
+  }
+
   function middleware (req, res, next) {
     const filename = url.parse(req.url).pathname.slice(1)
     const ext = path.extname(filename)
-
+    // serve last memory-bundled file
     if (filename && filename.length > 0 && files[filename]) {
       res.setHeader('content-type', mimeTypes[ext])
       res.statusCode = 200
@@ -58,6 +67,7 @@ function bundlerWrapper () {
       stream.push(files[filename])
       stream.push(null)
       stream.pipe(res)
+    // not for this middleware
     } else {
       next()
     }
@@ -65,6 +75,25 @@ function bundlerWrapper () {
 
   function bundle (opts) {
     opts = opts || {}
+
+    // save outputs to use the error handler
+    let domReporting = opts.overlay
+    let dests = opts.rollup.dest
+      ? [servedURL(opts.basedir, opts.rollup.dest)]
+      : opts.rollup.targets.map(target => servedURL(opts.basedir, target.dest))
+
+    console.log(dests)
+
+    // override onwarn options to catch & log warning events
+    let onwarncb = typeof opts.rollup.onwarn === 'function'
+      ? opts.rollup.onwarn
+      : function () {}
+
+    opts.rollup.onwarn = function (msg) {
+      log.warn(msg)
+      onwarncb(msg)
+    }
+
     return new Promise((resolve, reject) => {
       createWatcher(opts.rollup)
         .then(resolvedWatcher => {
@@ -82,7 +111,11 @@ function bundlerWrapper () {
                     event.duration + 'ms'
                   )
                 )
-                files = event.files
+                files = {}
+
+                for (let k in event.files) {
+                  files[servedURL(opts.basedir, k)] = event.files[k]
+                }
                 api.emit('bundle_end')
                 break
               case 'ERROR':
@@ -93,6 +126,11 @@ function bundlerWrapper () {
                   log.exitError(event.error)
                 } else {
                   log.error(event.error)
+                }
+
+                if (domReporting) {
+                  files = {}
+                  files['']
                 }
 
                 api.emit('bundle_error')
