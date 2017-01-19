@@ -55,14 +55,23 @@ function rulo (entry, _opts) {
     .then(() => {
       log.hr(21)
       log.success('Server is running on port ' + opts.port)
-      log.info(
-        log.colors.gray('↳  Local URL     ') +
-        log.colors.underline('http://' + opts.host + ':' + opts.port)
-      )
-      log.info(
-        log.colors.gray('↳  External URL  ') +
-        log.colors.underline('http://' + localip + ':' + opts.port)
-      )
+      
+      if (opts.host === undefined) {
+        log.info(
+          log.colors.gray('↳  Local URL     ') +
+          log.colors.underline('http://localhost:' + opts.port)
+        )
+        log.info(
+          log.colors.gray('↳  External URL  ') +
+          log.colors.underline('http://' + localip + ':' + opts.port)
+        )        
+      } else {
+        log.info(
+          log.colors.gray('↳  Host URL     ') +
+          log.colors.underline('http://' + opts.host + ':' + opts.port)
+        )
+      }
+
       log.hr(21)
     })
     .catch((err) => log.exitError(err))
