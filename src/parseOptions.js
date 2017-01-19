@@ -30,7 +30,8 @@ const defaultOpts = {
     }
   },
   stream: '', // process.stdout
-  verbose: false
+  verbose: false,
+  overlay: true
 }
 
 function loadConfigFile (configPath, cb) {

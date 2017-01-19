@@ -55,7 +55,7 @@ function rulo (entry, _opts) {
     .then(() => {
       log.hr(21)
       log.success('Server is running on port ' + opts.port)
-      
+
       if (opts.host === undefined) {
         log.info(
           log.colors.gray('↳  Local URL     ') +
@@ -64,7 +64,7 @@ function rulo (entry, _opts) {
         log.info(
           log.colors.gray('↳  External URL  ') +
           log.colors.underline('http://' + localip + ':' + opts.port)
-        )        
+        )
       } else {
         log.info(
           log.colors.gray('↳  Host URL     ') +

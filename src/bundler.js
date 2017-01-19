@@ -7,6 +7,7 @@ const Emitter = require('events')
 const rollup = require('rollup')
 const rollupWatch = require('another-rollup-watch')
 const log = require('./log')
+const errorOverlayFn = require('./errorOverlay')
 
 const cwd = process.cwd()
 
@@ -50,14 +51,14 @@ function bundlerWrapper () {
   api.middleware = middleware
 
   function servedURL (basedir, filepath) {
-    return path.relative(basedir, path.resolve(cwd, filepath))
+    return '/' + path.relative(basedir, path.resolve(cwd, filepath))
       .split(path.sep)
       .filter(v => v !== '..' && v !== '' && v !== '.')
-      .join(path.sep)
+      .join('/')
   }
 
   function middleware (req, res, next) {
-    const filename = url.parse(req.url).pathname.slice(1)
+    const filename = url.parse(req.url).pathname
     const ext = path.extname(filename)
     // serve last memory-bundled file
     if (filename && filename.length > 0 && files[filename]) {
@@ -81,8 +82,6 @@ function bundlerWrapper () {
     let dests = opts.rollup.dest
       ? [servedURL(opts.basedir, opts.rollup.dest)]
       : opts.rollup.targets.map(target => servedURL(opts.basedir, target.dest))
-
-    console.log(dests)
 
     // override onwarn options to catch & log warning events
     let onwarncb = typeof opts.rollup.onwarn === 'function'
@@ -128,12 +127,18 @@ function bundlerWrapper () {
                   log.error(event.error)
                 }
 
-                if (domReporting) {
+                if (error && domReporting) {
                   files = {}
-                  files['']
+                  const errScript = errorOverlayFn({
+                    name: error.name || 'Rollup Error',
+                    message: error.message || '',
+                    stack: error.stack || ''
+                  })
+                  dests.forEach(v => { files[v] = errScript })
+                  api.emit('bundle_end')
+                } else {
+                  api.emit('bundle_error')
                 }
-
-                api.emit('bundle_error')
                 break
             }
           })
