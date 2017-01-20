@@ -3,9 +3,12 @@
   "version": "0.2.1",
   "description": "A minimal dev server for Rollup",
   "main": "index.js",
+  "bin": "./bin/rulo.cli.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint src"
+    "test": "npm run lint && npm run deps && npm run tape",
+    "tape": "tape test/index.js | tap-spec",
+    "lint": "standard \"test/**/*.js\" \"bin/**/*.js\" \"src/**/*.js\" index.js ",
+    "deps": "dependency-check package.json --entry test/index.js && dependency-check package.json --entry test/index.js --extra --no-dev"
   },
   "repository": {
     "type": "git",
@@ -32,9 +35,16 @@
     "tiny-lr": "^1.0.3"
   },
   "devDependencies": {
-    "eslint": "^3.13.1",
-    "eslint-config-standard": "^6.2.1",
-    "eslint-plugin-promise": "^3.4.0",
-    "eslint-plugin-standard": "^2.0.1"
+    "dependency-check": "^2.7.0",
+    "run-waterfall": "^1.1.3",
+    "sander": "^0.6.0",
+    "standard": "^8.6.0",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.3"
+  },
+  "standard": {
+    "ignore": [
+      "test/fixtures/errors/**/*.js"
+    ]
   }
 }
