@@ -6,6 +6,7 @@ const http = require('http')
 function serverWrapper (opts) {
   opts = opts || {}
   let created = false
+  let closed = false
 
   const api = {
     handler: null,
@@ -22,6 +23,7 @@ function serverWrapper (opts) {
       api.handler = http.createServer(app)
       process.nextTick(() => {
         created = true
+        if (closed) close()
         resolve(api.handler)
       })
     })
@@ -29,6 +31,7 @@ function serverWrapper (opts) {
 
   function listen (port, host) {
     return new Promise((resolve, reject) => {
+      if (closed) return reject(new Error('Server closed'))
       if (!created) return reject(new Error('Server not created'))
       api.handler.listen(port, host, () => {
         resolve(api.handler)
@@ -37,6 +40,7 @@ function serverWrapper (opts) {
   }
 
   function close () {
+    closed = true
     if (created && api.handler) api.handler.close()
   }
 }

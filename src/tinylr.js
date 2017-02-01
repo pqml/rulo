@@ -6,6 +6,7 @@ const tinylr = require('tiny-lr')
 function tinylrWrapper (opts) {
   opts = opts || {}
   let created = false
+  let closed = false
 
   const api = {
     handler: null,
@@ -25,13 +26,15 @@ function tinylrWrapper (opts) {
         key: opts.key
       })
       created = true
+      if (closed) close()
       resolve(api.handler)
     })
   }
 
   function listen (port, host) {
     return new Promise((resolve, reject) => {
-      if (!created) return reject(new Error('Server not created'))
+      if (closed) return reject(new Error('LiveReload server closed'))
+      if (!created) return reject(new Error('LiveReload server not created'))
       if (typeof port !== 'number') port = 35729
 
       api.handler.listen(port, host, () => {
@@ -54,6 +57,7 @@ function tinylrWrapper (opts) {
   }
 
   function close () {
+    closed = true
     if (created) api.handler.close()
   }
 

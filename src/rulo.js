@@ -165,6 +165,7 @@ function rulo (entry, _opts) {
     fileWatcher.close()
     bundler.close()
     server.close()
+    api.removeAllListeners()
   }
 }
 
