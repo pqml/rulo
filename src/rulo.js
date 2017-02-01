@@ -47,7 +47,6 @@ function rulo (entry, _opts) {
     .then(resolvedOpts => { opts = resolvedOpts })
     .then(() => startLiveReload())
     .then(() => startFileWatcher())
-    .then(() => startBundler())
     .then(() => setupMiddlewares())
     .then(() => server.create(app))
     .then(() => getPort(opts.port))
@@ -75,8 +74,9 @@ function rulo (entry, _opts) {
 
       log.hr(21)
     })
-    .catch(err => () => {
-      throw err
+    .then(() => startBundler())
+    .catch(err => {
+      process.nextTick(() => { throw err })
     })
 
   return api
@@ -108,6 +108,10 @@ function rulo (entry, _opts) {
 
       bundler.on('bundle_start', res => api.emit('bundle_start', res))
       bundler.on('bundle_error', err => api.emit('bundle_error', err))
+      bundler.on('bundle_fatal_error', err => {
+        api.emit('bundle_error', err)
+        close()
+      })
       bundler.on('bundle_end', res => {
         api.emit('bundle_end', res)
         reload()
@@ -161,6 +165,7 @@ function rulo (entry, _opts) {
   }
 
   function close () {
+    log.info('Server closing...')
     tinylr.close()
     fileWatcher.close()
     bundler.close()

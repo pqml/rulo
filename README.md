@@ -4,6 +4,10 @@
 [![Build Status](https://ci.appveyor.com/api/projects/status/adlohvwpx33q0xr4/branch/master?svg=true)](https://ci.appveyor.com/project/pqml/rulo/branch/master)
 [![Build Status](https://secure.travis-ci.org/pqml/rulo.svg?branch=master)](https://travis-ci.org/pqml/rulo)
 
+<br>
+
+![Preview](assets/terminal-preview.png "Preview")
+
 
 <br>
 <h1></h1>

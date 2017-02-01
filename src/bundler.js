@@ -122,10 +122,10 @@ function bundlerWrapper () {
                 const error = event.error
                 error.name = 'Rollup Error'
 
+                log.error(event.error)
+
                 if (error.message && isErrorCritical(error.message)) {
-                  throw new Error(error)
-                } else {
-                  log.error(event.error)
+                  api.emit('bundle_fatal_error', error)
                 }
 
                 if (error && domReporting) {
@@ -141,7 +141,7 @@ function bundlerWrapper () {
                 break
             }
           })
-          resolve()
+          return resolve()
         })
         .catch(reject)
     })
