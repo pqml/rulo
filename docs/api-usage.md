@@ -129,3 +129,7 @@ All options are optional.
 #### `verbose` (Boolean)
 * Default: `false`
 * Log additional informations
+
+#### `mute` (Boolean)
+* Default: `false`
+* If true, don't write anything to the console

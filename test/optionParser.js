@@ -1,10 +1,8 @@
 'use strict'
-const path = require('path')
 const test = require('tape')
 const parser = require('../src/parseOptions')
 const waterfall = require('run-waterfall')
-const cwd = path.resolve(__dirname)
-// const sd = require('sander')
+const cwd = require('./utils/cwd')
 
 test('parseOption() function', t => {
   t.test('should have its entry arg overriding format, entry, targets from rollup options', t => {
@@ -47,7 +45,18 @@ test('parseOption() function', t => {
 
   t.test('should load a rollup config file', t => {
     t.plan(3)
-    parser(false, { config: path.resolve(cwd, 'fixtures/configs/simple.config.js') })
+    parser(false, { config: cwd('fixtures/configs/simple.config.js') })
+      .then(opts => {
+        t.notEqual(opts.rollup, undefined, 'opts.rollup is set')
+        t.equal(opts.rollup.entry, 'main.js', 'entry comes from the config file')
+        t.equal(opts.rollup.dest, 'bundle.js', 'dest comes from the config file')
+      })
+      .catch(err => { t.fail(err) })
+  })
+
+  t.test('should have options overiding config file', t => {
+    t.plan(3)
+    parser(false, { config: cwd('fixtures/configs/simple.config.js') })
       .then(opts => {
         t.notEqual(opts.rollup, undefined, 'opts.rollup is set')
         t.equal(opts.rollup.entry, 'main.js', 'entry comes from the config file')
@@ -58,7 +67,7 @@ test('parseOption() function', t => {
 
   t.test('should throw an error for invalid config file', t => {
     t.plan(1)
-    parser(false, { config: path.resolve(cwd, 'fixtures/errors/error.config.js') })
+    parser(false, { config: cwd('fixtures/errors/error.config.js') })
       .then(opts => { t.fail('Not throwing an error') })
       .catch(err => { t.pass('Throws an error: ' + err.message || '') })
   })

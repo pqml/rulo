@@ -101,6 +101,7 @@ function bundlerWrapper () {
           watcher.on('event', event => {
             switch (event.code) {
               case 'BUILD_START':
+                api.emit('bundle_start')
                 break
               case 'BUILD_END':
                 log.info(
@@ -122,7 +123,7 @@ function bundlerWrapper () {
                 error.name = 'Rollup Error'
 
                 if (error.message && isErrorCritical(error.message)) {
-                  log.exitError(event.error)
+                  throw new Error(error)
                 } else {
                   log.error(event.error)
                 }
@@ -135,10 +136,8 @@ function bundlerWrapper () {
                     stack: error.stack || ''
                   })
                   dests.forEach(v => { files[v] = errScript })
-                  api.emit('bundle_end')
-                } else {
-                  api.emit('bundle_error')
                 }
+                api.emit('bundle_error', error)
                 break
             }
           })

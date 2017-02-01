@@ -26,6 +26,7 @@ function rulo (entry, _opts) {
   // setup log right now
   if (_opts.stream) log.setStream(_opts.stream)
   if (_opts.verbose) log.setLevel('debug')
+  if (_opts.quiet) log.mute()
 
   const api = new Emitter()
   api.close = close
@@ -74,21 +75,23 @@ function rulo (entry, _opts) {
 
       log.hr(21)
     })
-    .catch((err) => log.exitError(err))
+    .catch(err => () => {
+      throw err
+    })
 
   return api
 
   function reload (file) {
     if (!liveReloading) return
+    api.emit('reload', file)
     tinylr.reload(file)
   }
 
   function startFileWatcher () {
     // No need to watch file if there is no glob or live option
-    if (!opts.live || opts.watchGlob) return Promise.resolve()
+    if (!opts.live || opts.watchGlob) return
     fileWatcher.watch(opts.watchGlob, { cwd: opts.basedir })
     fileWatcher.on('watch', (event, file) => reload(file))
-    return Promise.resolve()
   }
 
   function startBundler () {
@@ -98,10 +101,17 @@ function rulo (entry, _opts) {
         log.warn('No entry file. Rulo will act as a static server')
         return resolve()
       }
+
       bundler.bundle(opts)
         .then(resolve)
         .catch(reject)
-      bundler.on('bundle_end', reload)
+
+      bundler.on('bundle_start', res => api.emit('bundle_start', res))
+      bundler.on('bundle_error', err => api.emit('bundle_error', err))
+      bundler.on('bundle_end', res => {
+        api.emit('bundle_end', res)
+        reload()
+      })
     })
   }
 
@@ -129,7 +139,9 @@ function rulo (entry, _opts) {
       app.use(middleware)
     })
 
-    if (opts.rollup && opts.rollup.entry) app.use(bundler.middleware)
+    if (opts.rollup && opts.rollup.entry && opts.overlay) {
+      app.use(bundler.middleware)
+    }
 
     if (opts.pushstate) app.use(pushStateMiddleware)
 

@@ -1,13 +1,13 @@
 {
   "name": "rulo",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A minimal dev server for Rollup",
   "main": "index.js",
   "bin": "./bin/rulo.cli.js",
   "scripts": {
     "test": "npm run lint && npm run deps && npm run tape",
     "tape": "tape test/index.js | tap-spec",
-    "lint": "standard \"test/**/*.js\" \"bin/**/*.js\" \"src/**/*.js\" index.js ",
+    "lint": "snazzy \"test/**/*.js\" \"bin/**/*.js\" \"src/**/*.js\" index.js ",
     "deps": "dependency-check package.json --entry test/index.js && dependency-check package.json --entry test/index.js --extra --no-dev"
   },
   "repository": {
@@ -38,7 +38,7 @@
     "dependency-check": "^2.7.0",
     "run-waterfall": "^1.1.3",
     "sander": "^0.6.0",
-    "standard": "^8.6.0",
+    "snazzy": "^6.0.0",
     "tap-spec": "^4.1.1",
     "tape": "^4.6.3"
   },

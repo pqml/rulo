@@ -21,7 +21,8 @@ const minimistOpts = {
     'pushState',
     'version',
     'config',
-    'verbose'
+    'verbose',
+    'quiet'
   ],
   string: [
     'config',
@@ -41,6 +42,7 @@ const minimistOpts = {
     help: 'h',
     version: 'V',
     verbose: 'v',
+    quiet: 'q',
     host: 'H',
     noLive: 'no-live',
     noOverlay: 'no-overlay',

@@ -8,9 +8,18 @@ const levels = {'debug': 0, 'info': 1, 'warn': 2, 'error': 3}
 let stream = process.stdout
 let level = 1
 let colors = termColors
+let muted = false
 
 function emoji (name) {
   return nodeEmoji.get(name) + ' '
+}
+
+function mute () {
+  muted = true
+}
+
+function unmute () {
+  muted = false
 }
 
 function setLevel (_lvl) {
@@ -32,7 +41,7 @@ function hr (count) {
 }
 
 function write (msg) {
-  if (!stream || !stream.write) return
+  if (!stream || !stream.write || muted) return
   msg = colors.blue('Rulo') + colors.gray('  ') + msg
   stream.write(msg)
 }
@@ -84,17 +93,14 @@ function error (err) {
   write(line)
 }
 
-function exitError (err) {
-  error(err)
-  process.exit(1)
-}
-
 function success (msg) {
   msg = emoji('frog') + colors.green(' Success: ') + msg
   info(msg)
 }
 
 const log = {
+  mute,
+  unmute,
   setLevel,
   setStream,
   colors,
@@ -103,7 +109,6 @@ const log = {
   info,
   warn,
   error,
-  exitError,
   success,
   hr
 }
