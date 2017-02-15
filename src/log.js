@@ -94,7 +94,7 @@ function error (err) {
 }
 
 function success (msg) {
-  msg = emoji('frog') + colors.green(' Success: ') + msg
+  msg = emoji('white_check_mark') + colors.green(' Success: ') + msg
   info(msg)
 }
 
