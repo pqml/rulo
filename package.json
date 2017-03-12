@@ -1,7 +1,15 @@
 {
   "name": "rulo",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "A minimal dev server for Rollup",
+  "keywords": [
+    "rollup",
+    "dev",
+    "development",
+    "devserver",
+    "livereload",
+    "module"
+  ],
   "main": "index.js",
   "bin": "./bin/rulo.cli.js",
   "scripts": {
