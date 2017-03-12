@@ -1,6 +1,6 @@
 {
   "name": "rulo",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "A minimal dev server for Rollup",
   "main": "index.js",
   "bin": "./bin/rulo.cli.js",
@@ -28,8 +28,8 @@
     "minimist": "^1.2.0",
     "node-emoji": "^1.5.0",
     "require-from-string": "^1.2.1",
-    "rollup": "^0.41.4",
-    "serve-static": "^1.11.1",
+    "rollup": "^0.41.5",
+    "serve-static": "^1.12.1",
     "stacked": "^1.1.1",
     "term-color": "^1.0.1",
     "tiny-lr": "^1.0.3"
