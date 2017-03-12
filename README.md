@@ -6,7 +6,7 @@
 
 <br>
 
-![Preview](assets/terminal-preview.png "Preview")
+![Preview](https://github.com/pqml/rulo/blob/master/assets/terminal-preview.png?raw=true "Preview")
 
 
 <br>
@@ -31,13 +31,13 @@ If you want nice & stable dev server, fully tested, use [budo](https://github.co
 
 ###### Via global npm installation
 ```sh
-npm install -g pqml/rulo
+npm install -g rulo
 ```
 
 
 ###### Via local npm installation
 ```sh
-npm install pqml/rulo
+npm install rulo
 ```
 
 <br>
@@ -56,6 +56,7 @@ npm install pqml/rulo
 ### :memo: Todo
 
 - Test a lot more
+- Add https
 
 <br>
 <h1></h1>
