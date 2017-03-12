@@ -97,7 +97,7 @@ function parseOptions (entry, _opts) {
 
       if (entry && typeof entry === 'string') {
         const splittedEntry = entry.split(':')
-        if (splittedEntry.length > 2) return reject('Bad entry syntax.')
+        if (splittedEntry.length > 2) return reject(new Error('Bad entry syntax.'))
 
         if (opts.rollup.targets) delete opts.rollup.targets
         if (!opts.watch) opts.watch = {}
