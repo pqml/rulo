@@ -58,7 +58,6 @@ function loadConfigFile (configPath, cb) {
 function parseOptions (entry, _opts) {
   return new Promise((resolve, reject) => {
     _opts = _opts || {}
-
     if (_opts.config) {
       const configPath = (typeof _opts.config === 'string')
         ? _opts.config
@@ -69,6 +68,7 @@ function parseOptions (entry, _opts) {
     }
 
     function next (err, configOpts) {
+      console.log(configOpts)
       if (err) return reject(err)
 
       // just to avoid some extra dependencies for a deep-assign function

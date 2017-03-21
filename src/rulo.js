@@ -138,7 +138,7 @@ function rulo (entry, _opts) {
   function setupMiddlewares () {
     opts.middleware.forEach(middleware => {
       if (typeof middleware !== 'function') {
-        throw new Error('middleware options must be functions')
+        throw new Error('middleware option must be array of functions')
       }
       app.use(middleware)
     })
