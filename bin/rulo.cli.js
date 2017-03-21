@@ -20,12 +20,10 @@ const minimistOpts = {
     'noLive',
     'pushState',
     'version',
-    'config',
     'verbose',
     'quiet'
   ],
   string: [
-    'config',
     'host',
     'port',
     'livePort',
