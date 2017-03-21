@@ -68,7 +68,6 @@ function parseOptions (entry, _opts) {
     }
 
     function next (err, configOpts) {
-      console.log(configOpts)
       if (err) return reject(err)
 
       // just to avoid some extra dependencies for a deep-assign function
