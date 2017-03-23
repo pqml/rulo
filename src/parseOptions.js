@@ -11,6 +11,9 @@ const defaultOpts = {
   host: undefined,
   port: 8080,
   basedir: cwd,
+  entry: null,
+  dest: null,
+  format: 'umd',
   live: true,
   livePort: 35729,
   watchGlob: '**/*.{html,css}',
@@ -55,7 +58,7 @@ function loadConfigFile (configPath, cb) {
   })
 }
 
-function parseOptions (entry, _opts) {
+function parseOptions (_opts) {
   return new Promise((resolve, reject) => {
     _opts = _opts || {}
     if (_opts.config) {
@@ -94,26 +97,29 @@ function parseOptions (entry, _opts) {
         ? _opts.rollup.watch.chokidar : {}
       )
 
-      if (entry && typeof entry === 'string') {
-        const splittedEntry = entry.split(':')
-        if (splittedEntry.length > 2) return reject(new Error('Bad entry syntax.'))
-
+      if (typeof opts.entry === 'string') {
+        // remove targets to focus only on dest
         if (opts.rollup.targets) delete opts.rollup.targets
+
+        // TODO: not sure why I did this?
         if (!opts.watch) opts.watch = {}
+
+        // TODO: this is wrong, it always remove watch option
         opts.rollup.watch.inMemory = true
         opts.rollup.watch.write = false
-        opts.rollup.format = 'iife'
 
-        opts.rollup.entry = splittedEntry[0]
+        opts.rollup.entry = opts.entry
+        opts.rollup.format = opts.format
+        if (opts.moduleName) opts.rollup.moduleName = opts.moduleName
 
         // normalize dest path by writing it relative to cwd, not to basedir
-        opts.rollup.dest = splittedEntry[1]
-          ? path.relative(cwd, path.resolve(opts.basedir, splittedEntry[1]))
+        opts.rollup.dest = opts.dest
+          ? path.relative(cwd, path.resolve(opts.basedir, opts.dest))
           : opts.rollup.entry
       }
 
       if (!opts.index.script) {
-        if (entry && typeof entry === 'string') {
+        if (typeof opts.entry === 'string') {
           opts.index.script = '/' + opts.rollup.dest
         } else {
           if (opts.rollup.targets) {

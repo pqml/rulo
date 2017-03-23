@@ -17,13 +17,29 @@ sudo npm link rulo
 
 <br>
 
-### `rulo entry.js:bundle.js [opts] -- [rollupOpts]`
+### `rulo [opts] -- [rollupOpts]`
 
 #### `--help` / `-h`
 * Show help message
 
 #### `--version` / `-v`
 * Show version number for `rulo`, `rollup`, and `another-rollup-watch`
+
+#### `--entry` / `--input` / `-i`
+* Filepath of the entry file to bundle
+* if set, it will remove entry/dest/format/targets options from rollupOpts or the loaded config file
+
+#### `--dest` / `--output` / `-o`
+* Default: `opts.entry`
+* Filepath of the bundle
+
+#### `--format` / `-f`
+* Default: `umd`
+* Can be `umd`, `iife`, `cjs`, `es`, `amd`
+* If you choose umd or iife you have to set the moduleName options through the CLI or the config file.
+
+#### `--module-name` / `-n`
+* Module name passed to window.global when the bundle format is umd or iife
 
 #### `--port` / `-p`
 * Default: `8080`

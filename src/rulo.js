@@ -19,7 +19,7 @@ const createLRMiddleware = require('./middlewares/livereload')
 const faviconMiddleware = require('./middlewares/favicon')
 const pushStateMiddleware = require('./middlewares/pushstate')
 
-function rulo (entry, _opts) {
+function rulo (_opts) {
   let opts = {}
   _opts = _opts || {}
 
@@ -43,7 +43,7 @@ function rulo (entry, _opts) {
 
   log.info(log.emoji('cyclone') + log.colors.blue(' version ' + ruloVersion))
 
-  parseOptions(entry, _opts)
+  parseOptions(_opts)
     .then(resolvedOpts => { opts = resolvedOpts })
     .then(() => startLiveReload())
     .then(() => startFileWatcher())

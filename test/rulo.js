@@ -8,7 +8,7 @@ const cwd = require('./utils/cwd')
 test('rulo', t => {
   t.test('should emit bundle_starts before any other events', t => {
     t.plan(1)
-    let r = rulo(cwd('fixtures/simple/main.js'), { quiet: true })
+    let r = rulo({ entry: cwd('fixtures/simple/main.js'), quiet: true })
     try { sd.unlinkSync('simple/bundle.js') } catch (err) {}
     let started = false
     r.once('bundle_start', () => {

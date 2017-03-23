@@ -24,6 +24,10 @@ const minimistOpts = {
     'quiet'
   ],
   string: [
+    'entry',
+    'dest',
+    'format',
+    'moduleName',
     'host',
     'port',
     'livePort',
@@ -34,6 +38,10 @@ const minimistOpts = {
     live: true
   },
   alias: {
+    entry: ['i', 'input'],
+    dest: ['o', 'output'],
+    format: 'f',
+    moduleName: ['n', 'module-name'],
     config: 'c',
     port: 'p',
     basedir: 'd',
@@ -46,7 +54,7 @@ const minimistOpts = {
     noOverlay: 'no-overlay',
     pushState: 'P',
     watchGlob: [ 'wg', 'watch-glob' ],
-    'livePort': ['L', 'live-port']
+    livePort: ['L', 'live-port']
   },
   '--': true
 }
@@ -69,13 +77,13 @@ if (argv.version !== undefined) delete argv.version
 if (argv.help !== undefined) delete argv.help
 
 // setup entry
-let entry
-if (argv._ && argv._[0]) {
-  entry = argv._[0]
-  if (entry.split(':').length > 2) {
-    log.exitError('Bad syntax on entry')
-  }
-}
+// let entry
+// if (argv._ && argv._[0]) {
+//   entry = argv._[0]
+//   if (entry.split(':').length > 2) {
+//     log.exitError('Bad syntax on entry')
+//   }
+// }
 delete argv._
 
 // get rollup options
@@ -109,4 +117,4 @@ options.overlay = options.noOverlay !== undefined ? !options.noOverlay : true
 delete options.noLive
 delete options.noOverlay
 
-rulo(entry, options)
+rulo(options)

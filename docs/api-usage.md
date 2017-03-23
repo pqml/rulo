@@ -2,45 +2,26 @@
 
 <br>
 
-### `const r = rulo(entry, [options])`
+### `const r = rulo([options])`
 Sets up a new instance of `rulo`.
 The return value is an event emitter.
 
-<br>
-
-### entry
-`String` (Default: `undefined`)
-<br>
-The bundle's entry point. By default, the bundle will be served at the base dir of the rulo server, with the same name as the entry file.<br>
-
-__:warning: If you pass an entry as first argument of rulo, rulo will automatically serve the bundle in-memory only and in an iife format for convenience.__ You can setup more advanced settings by setting the entry to false or undefined and only use a config file with `options.config` or an object of rollup options with `options.rollup`
-
-<br>
-
-###### Overiding entry property
-
-* If no entry is given, rulo will use the entry property passed to `options.rollup`.
-* If there is no entry property, rulo will use the entry property from the config file passed to `options.config`
-* If no entry / config file is given, rulo acts as a static HTTP server with LiveReload ability.
-
-<br>
 
 ###### Basic entry example
 ```javascript
-const r = rulo('app.js')
-// create a new rulo server that bundles and watches app.js.
+const r = rulo({ entry: 'app.js' })
+// create a new rulo server that watches app.js and bundle it as UMD module.
 // The bundle is accessible from http://localhost/app.js
 ```
-
-<br>
-
-:bulb: __You can specify the location of the destination bundle with the syntax `entry.js:bundle.js`.__
-The path of the output starts from the root of the rulo server, configurable via `options.baseDir`.
 
 ###### Entry with explicit output path
 
 ```javascript
-const r = rulo('app.js:scripts/bundle.js')
+const r = rulo({
+    entry: 'app.js',
+    dest: 'scripts/bundle.js',
+    format: 'cjs'
+})
 // create a new rulo server that bundles and watches app.js.
 // The bundle is accessible from http://localhost/scripts/bundle.js
 ```
@@ -51,6 +32,29 @@ const r = rulo('app.js:scripts/bundle.js')
 `Object`
 <br>
 All options are optional.
+
+#### `entry` (String)
+* Default: `null`
+* The bundle's entry point
+* if set, it will remove entry/dest/format/targets options from rollup options or the loaded config file
+* __:warning: If you pass an entry as first argument of rulo, rulo will automatically serve the bundle in-memory only and in an iife format for convenience.__ You can setup more advanced settings by setting the entry to false or undefined and only use a config file with `options.config` or an object of rollup options with `options.rollup`
+* If no entry / config file is given at all, rulo acts as a static HTTP server with LiveReload ability.
+<br>
+
+#### `dest` (String)
+* Default: value of `options.entry`
+* The bundle destination filepath
+* This will be used only if `options.entry` is set
+
+#### `format` (String)
+* Default: `umd`
+* Can be `umd`, `iife`, `cjs`, `es`, `amd`
+* If you choose umd or iife you have to set the moduleName options through the CLI or the config file.
+* This will be used only if `options.entry` is set
+
+#### `moduleName` (String)
+* Module name passed to window.global when the bundle format is umd or iife
+* This will be used only if `options.entry` is set
 
 #### `host` (String)
 * Default: `'localhost'`
