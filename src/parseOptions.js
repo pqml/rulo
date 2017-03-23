@@ -20,6 +20,7 @@ const defaultOpts = {
   middleware: [],
   pushState: false,
   config: false,
+  write: false,
   index: {
     title: 'rulo',
     css: null,
@@ -104,9 +105,8 @@ function parseOptions (_opts) {
         // TODO: not sure why I did this?
         if (!opts.watch) opts.watch = {}
 
-        // TODO: this is wrong, it always remove watch option
         opts.rollup.watch.inMemory = true
-        opts.rollup.watch.write = false
+        opts.rollup.watch.write = opts.write
 
         opts.rollup.entry = opts.entry
         opts.rollup.format = opts.format

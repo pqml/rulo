@@ -21,7 +21,8 @@ const minimistOpts = {
     'pushState',
     'version',
     'verbose',
-    'quiet'
+    'quiet',
+    'write'
   ],
   string: [
     'entry',
@@ -42,6 +43,7 @@ const minimistOpts = {
     dest: ['o', 'output'],
     format: 'f',
     moduleName: ['n', 'module-name'],
+    write: 'W',
     config: 'c',
     port: 'p',
     basedir: 'd',
