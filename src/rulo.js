@@ -107,7 +107,10 @@ function rulo (_opts) {
         .catch(reject)
 
       bundler.on('bundle_start', res => api.emit('bundle_start', res))
-      bundler.on('bundle_error', err => api.emit('bundle_error', err))
+      bundler.on('bundle_error', err => {
+        api.emit('bundle_error', err)
+        if (opts.overlay) reload()
+      })
       bundler.on('bundle_fatal_error', err => {
         api.emit('bundle_error', err)
         close()

@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/pqml/rulo#readme",
   "dependencies": {
-    "another-rollup-watch": "^3.8.1",
+    "another-rollup-watch": "^3.9.0",
     "chokidar": "^1.6.1",
     "connect-pushstate": "^1.1.0",
     "inject-lr-script": "^2.0.0",
