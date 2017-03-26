@@ -89,7 +89,7 @@ function rulo (_opts) {
 
   function startFileWatcher () {
     // No need to watch file if there is no glob or live option
-    if (!opts.live || opts.watchGlob) return
+    if (!opts.live || !opts.watchGlob) return
     fileWatcher.watch(opts.watchGlob, { cwd: opts.basedir })
     fileWatcher.on('watch', (event, file) => reload(file))
   }
