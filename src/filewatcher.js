@@ -11,6 +11,7 @@ const ignores = [
 
 function fileWatcherWrapper () {
   let watcher
+  let closed = false
   let ready = false
   let api = new Emitter()
   api.watch = watch
@@ -32,14 +33,15 @@ function fileWatcherWrapper () {
       cwd: process.cwd()
     }, userOpts)
 
+    ready = true
     watcher = chokidar.watch(glob, opts)
     watcher.on('add', onAdd)
     watcher.on('change', onChange)
-
-    ready = true
+    if (closed) close()
   }
 
   function close () {
+    closed = true
     if (ready && watcher) watcher.close()
   }
 
