@@ -22,7 +22,7 @@ sudo npm link rulo
 #### `--help` / `-h`
 * Show help message
 
-#### `--version` / `-v`
+#### `--version` / `-V`
 * Show version number for `rulo`, `rollup`, and `another-rollup-watch`
 
 #### `--entry` / `--input` / `-i`
