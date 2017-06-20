@@ -15,6 +15,10 @@ b('  ' + log.colors.green('rulo') + ' index.js:bundle.js [opts] -- [rollup opts]
 'Options:\n' +
 '  --help, -h          ' + i('Show help message') + '\n' +
 '  --version, -V       ' + i('Show version') + '\n' +
+'  --input, -i         ' + i('overide the entry file to bundle') + '\n' +    
+'  --entry             ' + i('same as --input') + '\n' +
+'  --output, -o        ' + i('overide the default output') + '\n' +    
+'  --dest              ' + i('same as --output') + '\n' +
 '  --port, -p          ' + i('The port to run, default 8080') + '\n' +
 '  --host, -H          ' + i('The host, default local IP and localhost') + '\n' +
 '  --basedir, -d       ' + i('A path for base static content') + '\n' +
