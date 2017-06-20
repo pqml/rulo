@@ -66,7 +66,7 @@ const argv = minimist(args, minimistOpts)
 if (argv.version) {
   log.info('rulo v' + ruloVersion)
   log.info('rollup v' + rollupVersion)
-  log.info('rollup-watch v' + rollupWatchVersion)
+  log.info('another-rollup-watch v' + rollupWatchVersion)
   process.exit(0)
 }
 

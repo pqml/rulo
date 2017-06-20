@@ -15,10 +15,10 @@ b('  ' + log.colors.green('rulo') + ' index.js:bundle.js [opts] -- [rollup opts]
 'Options:\n' +
 '  --help, -h          ' + i('Show help message') + '\n' +
 '  --version, -V       ' + i('Show version') + '\n' +
-'  --input, -i         ' + i('overide the entry file to bundle') + '\n' +    
-'  --entry             ' + i('same as --input') + '\n' +
-'  --output, -o        ' + i('overide the default output') + '\n' +    
-'  --dest              ' + i('same as --output') + '\n' +
+'  --input, -i         ' + i('Overide the entry file to bundle') + '\n' +
+'  --entry             ' + i('Same as --input') + '\n' +
+'  --output, -o        ' + i('Overide the default output') + '\n' +
+'  --dest              ' + i('Same as --output') + '\n' +
 '  --port, -p          ' + i('The port to run, default 8080') + '\n' +
 '  --host, -H          ' + i('The host, default local IP and localhost') + '\n' +
 '  --basedir, -d       ' + i('A path for base static content') + '\n' +
@@ -29,7 +29,7 @@ b('  ' + log.colors.green('rulo') + ' index.js:bundle.js [opts] -- [rollup opts]
 '  --config, -c        ' + i('A path to a Rollup config file, default false') + '\n' +
 '  --no-overlay        ' + i('Disable the DOM-based error reporter, default false') + '\n' +
 '  --verbose, -v       ' + i('Log additional informations, default false') + '\n' +
-'  --quiet, -q       ' + i('Don\'t write to the console, default false') + '\n'
+'  --quiet, -q         ' + i('Don\'t write to the console, default false') + '\n'
   )
 }
 
