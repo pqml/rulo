@@ -1,6 +1,6 @@
 {
   "name": "rulo",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "A minimal dev server for Rollup",
   "keywords": [
     "rollup",
