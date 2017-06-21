@@ -90,7 +90,9 @@ function rulo (_opts) {
   function startFileWatcher () {
     // No need to watch file if there is no glob or live option
     if (!opts.live || !opts.watchGlob) return
-    fileWatcher.watch(opts.watchGlob, { cwd: opts.basedir })
+    const chokidarOpts = opts.rollup && opts.rollup.chokidar ? opts.rollup && opts.rollup.chokidar : {}
+    const watcherOpts = Object.assign({}, chokidarOpts, { cwd: opts.basedir })
+    fileWatcher.watch(opts.watchGlob, watcherOpts)
     fileWatcher.on('watch', (event, file) => reload(file))
   }
 

@@ -1,5 +1,8 @@
 'use strict'
 
+const os = require('os')
+
+const path = require('path')
 const Emitter = require('events')
 const chokidar = require('chokidar')
 
@@ -27,22 +30,35 @@ function fileWatcherWrapper () {
 
   function watch (glob, userOpts) {
     const opts = Object.assign({}, {
-      usePolling: userOpts && userOpts.poll,
+      usePolling: os.platform() !== 'darwin',
       ignored: ignores,
       ignoreInitial: true,
       cwd: process.cwd()
     }, userOpts)
 
-    ready = true
     watcher = chokidar.watch(glob, opts)
     watcher.on('add', onAdd)
     watcher.on('change', onChange)
-    if (closed) close()
+    watcher.once('ready', () => {
+      ready = true
+      if (closed) close()
+    })
   }
 
   function close () {
     closed = true
-    if (ready && watcher) watcher.close()
+    if (ready && watcher) {
+      let watchedFiles = watcher.getWatched()
+      for (let key in watchedFiles) {
+        let files = watchedFiles[key]
+        for (let file in files) {
+          let filePath = path.join(key, file)
+          watcher.unwatch(filePath)
+        }
+      }
+      watcher.close()
+      watcher = null
+    }
   }
 
   return api
