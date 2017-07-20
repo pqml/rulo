@@ -49,13 +49,14 @@ function loadConfigFile (configPath, cb) {
       }
     })
       .then(bundle => {
-        const code = bundle.generate({ format: 'cjs' }).code
-        const options = requireFromString(code)
-        cb(null, options)
+        bundle.generate({ format: 'cjs' })
+          .then(res => {
+            const options = requireFromString(res.code)
+            cb(null, options)
+          })
+          .catch(err => cb(err))
       })
-      .catch(err => {
-        cb(err)
-      })
+      .catch(err => cb(err))
   })
 }
 
