@@ -35,7 +35,7 @@
     "inject-lr-script": "^2.0.0",
     "minimist": "^1.2.0",
     "node-emoji": "^1.5.0",
-    "require-from-string": "^1.2.1",
+    "require-from-string": "^2.0.0",
     "rollup": "^0.47.5",
     "serve-static": "^1.12.1",
     "stacked": "^1.1.1",
