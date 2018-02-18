@@ -1,23 +1,10 @@
 {
   "name": "rulo",
-  "version": "0.6.0",
-  "description": "A minimal dev server for Rollup",
-  "keywords": [
-    "rollup",
-    "dev",
-    "development",
-    "devserver",
-    "livereload",
-    "module"
-  ],
+  "version": "0.7.0",
+  "description": "DEPRECATED",
+  "keywords": [],
   "main": "index.js",
-  "bin": "./bin/rulo.cli.js",
-  "scripts": {
-    "test": "npm run lint && npm run deps && npm run tape",
-    "tape": "tape test/index.js | tap-spec",
-    "lint": "standard | snazzy \"test/**/*.js\" \"bin/**/*.js\" \"src/**/*.js\" index.js ",
-    "deps": "dependency-check package.json --entry test/index.js && dependency-check package.json --entry test/index.js --extra --no-dev"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pqml/rulo.git"
@@ -28,32 +15,6 @@
     "url": "https://github.com/pqml/rulo/issues"
   },
   "homepage": "https://github.com/pqml/rulo#readme",
-  "dependencies": {
-    "another-rollup-watch": "^3.9.2",
-    "chokidar": "^1.6.1",
-    "connect-pushstate": "^1.1.0",
-    "inject-lr-script": "^2.0.0",
-    "minimist": "^1.2.0",
-    "node-emoji": "^1.5.0",
-    "require-from-string": "^1.2.1",
-    "rollup": "^0.47.5",
-    "serve-static": "^1.12.1",
-    "stacked": "^1.1.1",
-    "term-color": "^1.0.1",
-    "tiny-lr": "^1.0.3"
-  },
-  "devDependencies": {
-    "dependency-check": "^2.7.0",
-    "run-waterfall": "^1.1.3",
-    "sander": "^0.6.0",
-    "snazzy": "^7.0.0",
-    "standard": "^10.0.2",
-    "tap-spec": "^4.1.1",
-    "tape": "^4.6.3"
-  },
-  "standard": {
-    "ignore": [
-      "test/fixtures/errors/**/*.js"
-    ]
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }
